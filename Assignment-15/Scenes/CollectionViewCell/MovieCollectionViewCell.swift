@@ -118,8 +118,8 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             // self = UITableViewCell
             cellStackView.topAnchor.constraint(equalTo: self.topAnchor),
-            cellStackView.leftAnchor.constraint(equalTo: self.leftAnchor),
-            cellStackView.rightAnchor.constraint(equalTo: self.rightAnchor),
+            cellStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            cellStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             cellStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
     }
