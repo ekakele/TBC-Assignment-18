@@ -1,8 +1,9 @@
 //
 //  MovieCollectionViewCell.swift
-//  Assignment-15
+//  Assignment-18: Assignment-15 + API
 //
 //  Created by Eka Kelenjeridze on 03.11.23.
+//  Modified by Eka Kelenjeridze on 11.11.23.
 //
 
 import UIKit
@@ -36,14 +37,14 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
-    private let ratingLabel: UILabel = {
+    private let imdbIDLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .bold)
         label.textColor = .white
         label.textAlignment = .center
         label.layer.cornerRadius = 16
         label.backgroundColor = UIColor(red: 1, green: 0.502, blue: 0.212, alpha: 1)
-        label.frame = CGRect(x: 125, y: 4, width: 33, height: 23)
+        label.frame = CGRect(x: 80, y: 4, width: 80, height: 23)
         return label
     }()
     
@@ -56,7 +57,7 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let genreLabel: UILabel = {
+    private let yearLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 14, weight: .light)
@@ -82,17 +83,19 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         
         movieImageView.image = nil
         addToFavoritesButton.tintColor = nil
-        ratingLabel.text = nil
+        imdbIDLabel.text = nil
         titleLabel.text = nil
-        genreLabel.text = nil
+        yearLabel.text = nil
     }
     
     // MARK: - Configure
     func configure(with movie: Movie) {
-        movieImageView.image = movie.image
-        ratingLabel.text = String(movie.rating)
         titleLabel.text = movie.title
-        genreLabel.text = movie.genre.rawValue
+        yearLabel.text = String(movie.year)
+        imdbIDLabel.text = movie.imdbID
+        if let url = URL(string: movie.poster) {
+            loadImage(from: url)
+        }
     }
     
     // MARK: - Private Methods
@@ -107,9 +110,9 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         
         cellStackView.addArrangedSubview(movieImageView)
         cellStackView.addArrangedSubview(titleLabel)
-        cellStackView.addArrangedSubview(genreLabel)
+        cellStackView.addArrangedSubview(yearLabel)
         
-        cellStackView.addSubview(ratingLabel)
+        cellStackView.addSubview(imdbIDLabel)
         cellStackView.addSubview(addToFavoritesButton)
         
         NSLayoutConstraint.activate([
@@ -133,7 +136,7 @@ final class MovieCollectionViewCell: UICollectionViewCell {
     private func setupLabelsConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: movieImageView.bottomAnchor, constant: 8),
-            genreLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4)
+            yearLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4)
         ])
     }
     
@@ -153,5 +156,16 @@ final class MovieCollectionViewCell: UICollectionViewCell {
             self.addToFavoritesButton.tintColor = .red
             self.isSelected = true
         }
+    }
+    
+    private func loadImage(from url: URL) {
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self, let data = data, error == nil else {
+                return
+            }
+            DispatchQueue.main.async {
+                self.movieImageView.image = UIImage(data: data)
+            }
+        }.resume()
     }
 }

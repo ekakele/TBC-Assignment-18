@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Assignment-15
+//  Assignment-18: Assignment-15 + API
 //
 //  Created by Eka Kelenjeridze on 03.11.23.
 //

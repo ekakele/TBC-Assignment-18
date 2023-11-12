@@ -1,8 +1,9 @@
 //
 //  HomeViewController.swift
-//  Assignment-15
+//  Assignment-18: Assignment-15 + API
 //
 //  Created by Eka Kelenjeridze on 03.11.23.
+//  Modified by Eka Kelenjeridze on 11.11.23.
 //
 
 import UIKit
@@ -56,17 +57,11 @@ final class HomeViewController: UIViewController {
         return collectionView
     }()
     
-//   private var movies = Movie.nowOnCinema
-    
-    private var movies = MovieSearch
-    var movieManager = MovieManager()
+    private var searchedMovies = [Movie]()
     
     // MARK: - ViewLifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        movieManager.delegate = self
-
         
         setupBackground()
         setupSubviews()
@@ -74,7 +69,9 @@ final class HomeViewController: UIViewController {
         setupLabelConstraints()
         setupCollectionView()
         setupCollectionViewConstraints()
+        fetchMovies()
     }
+    
     // MARK: - Private Methods
     private func setupBackground() {
         view.backgroundColor = UIColor(red: 0.1, green: 0.13, blue: 0.2, alpha: 1)
@@ -125,12 +122,22 @@ final class HomeViewController: UIViewController {
             moviesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+    
+    private func fetchMovies() {
+        APIService.fetchMovies { [weak self] searchedMovies in
+            guard let self = self, let searchedMovies = searchedMovies else { return }
+            DispatchQueue.main.async {
+                self.searchedMovies = searchedMovies
+                self.moviesCollectionView.reloadData()
+            }
+        }
+    }
 }
 
 // MARK: - CollectionView DataSource
 extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movies.count
+        return searchedMovies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -138,17 +145,17 @@ extension HomeViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        cell.configure(with: movies[indexPath.row])
+        cell.configure(with: searchedMovies[indexPath.row])
         return cell
     }
 }
 // MARK: - CollectionView Delegate
 extension HomeViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movieDetailsPage = MovieDetailViewController()
-        movieDetailsPage.configure(with: movies[indexPath.row])
-        navigationController?.pushViewController(movieDetailsPage, animated: true)
-    }
+    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    //        let movieDetailsPage = MovieDetailViewController()
+    //        movieDetailsPage.configure(with: movies[indexPath.row])
+    //        navigationController?.pushViewController(movieDetailsPage, animated: true)
+    //    }
 }
 
 // MARK: - CollectionView DelegateFlowLayout
