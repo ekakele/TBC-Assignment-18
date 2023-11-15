@@ -172,17 +172,17 @@ final class MovieDetailViewController: UIViewController {
     }
     
     private func setupMovieWithInformation() {
-//        guard let movie else { return }
-//        navigationItem.title = movie.title
-//        movieImageView.image =  movie.image
-//        ratingLabel.text = String(movie.rating)
-//        ratingSourceLabel.text = String(movie.ratingSource)
-//        descriptionLabel.text = movie.description
-//        createInfoStackView("Runtime", detail: movie.runtime)
-//        createInfoStackView("Release", detail: movie.release)
-//        createInfoStackView("Genre", detail: movie.genre.rawValue)
-//        createInfoStackView("Director", detail: movie.director)
-//        createInfoStackView("Cast", detail: movie.cast)
+        //        guard let movie else { return }
+        //        navigationItem.title = movie.title
+        //        movieImageView.image =  movie.image
+        //        ratingLabel.text = String(movie.rating)
+        //        ratingSourceLabel.text = String(movie.ratingSource)
+        //        descriptionLabel.text = movie.description
+        //        createInfoStackView("Runtime", detail: movie.runtime)
+        //        createInfoStackView("Release", detail: movie.release)
+        //        createInfoStackView("Genre", detail: movie.genre.rawValue)
+        //        createInfoStackView("Director", detail: movie.director)
+        //        createInfoStackView("Cast", detail: movie.cast)
     }
     
     // MARK: - Configure

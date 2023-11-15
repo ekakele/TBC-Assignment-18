@@ -39,12 +39,13 @@ final class MovieCollectionViewCell: UICollectionViewCell {
     
     private let imdbIDLabel: UILabel = {
         let label = UILabel()
+        label.frame = CGRect(x: 80, y: 4, width: 80, height: 23)
         label.font = .systemFont(ofSize: 12, weight: .bold)
         label.textColor = .white
         label.textAlignment = .center
-        label.layer.cornerRadius = 16
+        label.layer.cornerRadius = 5
+        label.clipsToBounds = true
         label.backgroundColor = UIColor(red: 1, green: 0.502, blue: 0.212, alpha: 1)
-        label.frame = CGRect(x: 80, y: 4, width: 80, height: 23)
         return label
     }()
     
@@ -116,7 +117,6 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         cellStackView.addSubview(addToFavoritesButton)
         
         NSLayoutConstraint.activate([
-            // self = UITableViewCell
             cellStackView.topAnchor.constraint(equalTo: self.topAnchor),
             cellStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             cellStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
@@ -147,14 +147,14 @@ final class MovieCollectionViewCell: UICollectionViewCell {
     }
     
     private func addToFavoritesButtonClicked() {
-        if self.isSelected == true {
-            self.addToFavoritesButton.setImage(UIImage(systemName: "heart"), for: .normal)
-            self.addToFavoritesButton.tintColor = .black
-            self.isSelected = false
+        if isSelected == true {
+            addToFavoritesButton.setImage(UIImage(systemName: "heart"), for: .normal)
+            addToFavoritesButton.tintColor = .black
+            isSelected = false
         } else {
-            self.addToFavoritesButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-            self.addToFavoritesButton.tintColor = .red
-            self.isSelected = true
+            addToFavoritesButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            addToFavoritesButton.tintColor = .red
+            isSelected = true
         }
     }
     
