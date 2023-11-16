@@ -37,9 +37,9 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
-    private let imdbIDLabel: UILabel = {
+    private let typeLabel: UILabel = {
         let label = UILabel()
-        label.frame = CGRect(x: 80, y: 4, width: 80, height: 23)
+        label.frame = CGRect(x: 110, y: 4, width: 50, height: 23)
         label.font = .systemFont(ofSize: 12, weight: .bold)
         label.textColor = .white
         label.textAlignment = .center
@@ -84,7 +84,7 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         
         movieImageView.image = nil
         addToFavoritesButton.tintColor = nil
-        imdbIDLabel.text = nil
+        typeLabel.text = nil
         titleLabel.text = nil
         yearLabel.text = nil
     }
@@ -92,9 +92,9 @@ final class MovieCollectionViewCell: UICollectionViewCell {
     // MARK: - Configure
     func configure(with movie: Movie) {
         titleLabel.text = movie.title
-        yearLabel.text = String(movie.year)
-        imdbIDLabel.text = movie.imdbID
-        if let url = URL(string: movie.poster) {
+        yearLabel.text = movie.year
+        typeLabel.text = movie.type
+        if let url = URL(string: movie.poster!) {
             loadImage(from: url)
         }
     }
@@ -113,7 +113,7 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         cellStackView.addArrangedSubview(titleLabel)
         cellStackView.addArrangedSubview(yearLabel)
         
-        cellStackView.addSubview(imdbIDLabel)
+        cellStackView.addSubview(typeLabel)
         cellStackView.addSubview(addToFavoritesButton)
         
         NSLayoutConstraint.activate([

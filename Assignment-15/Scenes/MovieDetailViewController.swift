@@ -42,6 +42,7 @@ final class MovieDetailViewController: UIViewController {
     
     private let ratingSourceLabel: UILabel = {
         let label = UILabel()
+        label.text = "IMDB ID"
         label.textColor = .white
         label.font = .systemFont(ofSize: 14, weight: .light)
         return label
@@ -172,17 +173,23 @@ final class MovieDetailViewController: UIViewController {
     }
     
     private func setupMovieWithInformation() {
-        //        guard let movie else { return }
-        //        navigationItem.title = movie.title
-        //        movieImageView.image =  movie.image
-        //        ratingLabel.text = String(movie.rating)
-        //        ratingSourceLabel.text = String(movie.ratingSource)
-        //        descriptionLabel.text = movie.description
-        //        createInfoStackView("Runtime", detail: movie.runtime)
-        //        createInfoStackView("Release", detail: movie.release)
-        //        createInfoStackView("Genre", detail: movie.genre.rawValue)
-        //        createInfoStackView("Director", detail: movie.director)
-        //        createInfoStackView("Cast", detail: movie.cast)
+        guard let movie else { return }
+        navigationItem.title = movie.title
+        ratingLabel.text = movie.imdbID
+        if let url = URL(string: movie.poster!) {
+            loadImage(from: url)
+        }
+    }
+    
+    private func loadImage(from url: URL) {
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self, let data = data, error == nil else {
+                return
+            }
+            DispatchQueue.main.async {
+                self.movieImageView.image = UIImage(data: data)
+            }
+        }.resume()
     }
     
     // MARK: - Configure

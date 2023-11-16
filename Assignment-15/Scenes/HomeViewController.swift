@@ -27,20 +27,20 @@ final class HomeViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(red: 1, green: 0.502, blue: 0.212, alpha: 1)
         button.layer.cornerRadius = 8
-        button.frame = CGRect(x: 0, y: 0, width: 77, height: 40)
+        button.frame = CGRect(x: 0, y: 0, width: 77, height: 0)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.shadowColor = CGColor(red: 1, green: 0.502, blue: 0.212, alpha: 0.25)
         button.layer.shadowOpacity = 1
         button.layer.shadowRadius = 16
         button.clipsToBounds = false
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
-        button.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         return button
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Movies to watch in November"
+        label.text = "Recommended Movies"
         label.font = .systemFont(ofSize: 22, weight: .bold)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -57,6 +57,7 @@ final class HomeViewController: UIViewController {
         return collectionView
     }()
     
+    private let searchController = UISearchController()
     private var searchedMovies = [Movie]()
     
     // MARK: - ViewLifeCycle
@@ -66,10 +67,11 @@ final class HomeViewController: UIViewController {
         setupBackground()
         setupSubviews()
         setupNavigationBar()
+        setupSearchBar()
         setupLabelConstraints()
         setupCollectionView()
         setupCollectionViewConstraints()
-        fetchMovies()
+        fetchMovies(keyword: "Christmas")
     }
     
     // MARK: - Private Methods
@@ -78,6 +80,8 @@ final class HomeViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
+        navigationController?.navigationBar.barStyle = .black
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             customView: logoImageView
         )
@@ -85,6 +89,15 @@ final class HomeViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             customView: profileButton
         )
+    }
+    
+    private func setupSearchBar() {
+        navigationItem.searchController = searchController
+        searchController.searchResultsUpdater = self
+        
+        searchController.searchBar.placeholder = "Search"
+        searchController.hidesNavigationBarDuringPresentation = true
+        searchController.obscuresBackgroundDuringPresentation = true
     }
     
     private func setupSubviews() {
@@ -116,18 +129,19 @@ final class HomeViewController: UIViewController {
     
     private func setupCollectionViewConstraints() {
         NSLayoutConstraint.activate([
-            moviesCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 61),
+            moviesCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 55
+                                                     ),
             moviesCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             moviesCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             moviesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
-    private func fetchMovies() {
-        APIService.fetchMovies { [weak self] searchedMovies in
+    private func fetchMovies(keyword: String) {
+        APIService.shared.fetchMovies(searchKeyword: keyword) { [weak self] searchedMovies in
             guard let self = self, let searchedMovies = searchedMovies else { return }
+            self.searchedMovies = searchedMovies
             DispatchQueue.main.async {
-                self.searchedMovies = searchedMovies
                 self.moviesCollectionView.reloadData()
             }
         }
@@ -151,11 +165,11 @@ extension HomeViewController: UICollectionViewDataSource {
 }
 // MARK: - CollectionView Delegate
 extension HomeViewController: UICollectionViewDelegate {
-    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //        let movieDetailsPage = MovieDetailViewController()
-    //        movieDetailsPage.configure(with: movies[indexPath.row])
-    //        navigationController?.pushViewController(movieDetailsPage, animated: true)
-    //    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let movieDetailsPage = MovieDetailViewController()
+        movieDetailsPage.configure(with: searchedMovies[indexPath.row])
+        navigationController?.pushViewController(movieDetailsPage, animated: true)
+    }
 }
 
 // MARK: - CollectionView DelegateFlowLayout
@@ -177,5 +191,13 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: 16, bottom: 32, right: 16)
+    }
+}
+
+// MARK: - SearchController Methods
+extension HomeViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text, !text.isEmpty else { return }
+        fetchMovies(keyword: text)
     }
 }
